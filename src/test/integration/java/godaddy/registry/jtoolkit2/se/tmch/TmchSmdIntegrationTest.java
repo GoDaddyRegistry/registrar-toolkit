@@ -4,13 +4,18 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
+import javax.xml.bind.DatatypeConverter;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import godaddy.registry.jtoolkit2.se.tmch.exception.ExpiredSignedMarkDataException;
 import godaddy.registry.jtoolkit2.se.tmch.exception.InvalidSignedMarkDataException;
@@ -20,10 +25,6 @@ import godaddy.registry.jtoolkit2.se.tmch.exception.SmdSignatureMissingException
 import godaddy.registry.jtoolkit2.se.tmch.exception.TmchCertificateRevokedException;
 import godaddy.registry.jtoolkit2.se.tmch.exception.TmchInvalidCertificateException;
 import godaddy.registry.jtoolkit2.se.tmch.exception.TmchSmdRevokedException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class TmchSmdIntegrationTest {
 
@@ -57,8 +58,8 @@ public class TmchSmdIntegrationTest {
 
     @Test
     public void shouldFailValidationIfCertificateIsRevoked() throws Throwable {
-        InputStream inputStream =
-                Thread.currentThread().getContextClassLoader().getResourceAsStream("RevokedCertificateSMDData.txt");
+        InputStream inputStream = Thread.currentThread().getContextClassLoader()
+                        .getResourceAsStream("RevokedCertificateSMDData.txt");
 
         String expectedMessage = "Invalid Certificate in SignedMarkData. The issuing authority has revoked the "
                 + "certificate used in SignedMarkData:\n"
@@ -84,13 +85,27 @@ public class TmchSmdIntegrationTest {
     }
 
     @Test
-    public void shouldFailValidationIfSmdIsRevoked() throws Exception {
+    public void shouldFailValidationIfSmdIsRevoked() throws Throwable {
         InputStream inputStream =
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("RevokedSMDData.txt");
 
-        thrown.expect(TmchSmdRevokedException.class);
-        thrown.expectMessage("SignedMarkData with ID: 1-2 has been revoked.");
-        tmchValidatingParser.validateAndParseEncodedSignedMarkData(inputStream);
+
+        /* Below invocation failed due to expired certificate.
+         * Temporarily change to the other method which accepts a 2nd param for Date.
+         */
+        //        tmchValidatingParser.validateAndParseEncodedSignedMarkData(inputStream);
+        final Method validateEncodedSmdForDateMethod = TmchValidatingParser.class.getDeclaredMethod(
+                "validateEncodedSignedMarkDataForDate", InputStream.class, Date.class);
+        validateEncodedSmdForDateMethod.setAccessible(true);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(2023, 01, 01);
+        try {
+            thrown.expect(TmchSmdRevokedException.class);
+            thrown.expectMessage("SignedMarkData with ID: 1-2 has been revoked.");
+            validateEncodedSmdForDateMethod.invoke(tmchValidatingParser, inputStream, calendar.getTime());
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
     }
 
     @Test
@@ -105,13 +120,26 @@ public class TmchSmdIntegrationTest {
     }
 
     @Test
-    public void shouldFailValidationIfSmdHasExpired() throws Exception {
+    public void shouldFailValidationIfSmdHasExpired() throws Throwable {
         InputStream inputStream =
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("ExpiredSMDData.txt");
 
-        thrown.expect(ExpiredSignedMarkDataException.class);
-        thrown.expectMessage("SignedMarkData is not valid after 2012-08-29T09:00:00Z.");
-        tmchValidatingParser.validateAndParseEncodedSignedMarkData(inputStream);
+        /* Below invocation failed due to expired certificate.
+         * Temporarily change to the other method which accepts a 2nd param for Date.
+         */
+        //        tmchValidatingParser.validateAndParseEncodedSignedMarkData(inputStream);
+        final Method validateEncodedSmdForDateMethod = TmchValidatingParser.class.getDeclaredMethod(
+                "validateEncodedSignedMarkDataForDate", InputStream.class, Date.class);
+        validateEncodedSmdForDateMethod.setAccessible(true);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(2023, 01, 01);
+        try {
+            thrown.expect(ExpiredSignedMarkDataException.class);
+            thrown.expectMessage("SignedMarkData is not valid after 2012-08-29T09:00:00Z.");
+            validateEncodedSmdForDateMethod.invoke(tmchValidatingParser, inputStream, calendar.getTime());
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
     }
 
     @Test
@@ -130,7 +158,8 @@ public class TmchSmdIntegrationTest {
                 Thread.currentThread().getContextClassLoader().getResourceAsStream("NoSignatureSmd.txt");
 
         thrown.expect(SmdSignatureMissingException.class);
-        thrown.expectMessage("SignedMarkData provided is invalid as it is does not contain the Signature element.");
+        thrown.expectMessage(
+                "SignedMarkData provided is invalid as it is does not contain the Signature element.");
         tmchValidatingParser.validateAndParseEncodedSignedMarkData(inputStream);
     }
 
@@ -155,7 +184,8 @@ public class TmchSmdIntegrationTest {
         Date dateForValidation = DatatypeConverter.parseDate("2009-08-16T09:00:00.0Z").getTime();
 
         thrown.expect(TmchInvalidCertificateException.class);
-        thrown.expectMessage("Invalid Certificate provided in SignedMarkData.\nCertificate of serial number '4097'");
+        thrown.expectMessage(
+                "Invalid Certificate provided in SignedMarkData.\nCertificate of serial number '4097'");
         tmchValidatingParser.validateAndParseEncodedSignedMarkData(inputStream, dateForValidation);
     }
 
@@ -166,7 +196,8 @@ public class TmchSmdIntegrationTest {
 
         Date dateForValidation = DatatypeConverter.parseDate("2015-08-16T09:00:00.0Z").getTime();
         thrown.expect(TmchInvalidCertificateException.class);
-        thrown.expectMessage("Invalid Certificate provided in SignedMarkData.\nCertificate of serial number '4097'");
+        thrown.expectMessage(
+                "Invalid Certificate provided in SignedMarkData.\nCertificate of serial number '4097'");
         tmchValidatingParser.validateAndParseEncodedSignedMarkData(inputStream, dateForValidation);
     }
 

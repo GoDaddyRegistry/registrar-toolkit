@@ -14,6 +14,8 @@ public enum ExtendedObjectType implements ObjectType {
     VARIANT("variant", "urn:X-ar:params:xml:ns:variant-1.0", "variant-1.0.xsd", "name"),
     /** References the domain name variants extension (v1.1) XML namespace and schema file */
     VARIANT_V1_1("variantV1_1", "urn:ar:params:xml:ns:variant-1.1", "variant-1.1.xsd", "name"),
+    /** References the domain name gdr variants extension (v1.0) XML namespace and schema file */
+    GDR_VARIANT_V1_0("variantV1_0", "urn:gdr:params:xml:ns:variant-1.0", "gdr-variant-1.0.xsd", "name"),
     /** References the secDNS extension XML namespace and schema file */
     SEC_DNS("secDNS", "urn:ietf:params:xml:ns:secDNS-1.1", "secDNS-1.1.xsd", "name"),
     SYNC("sync", "urn:X-ar:params:xml:ns:sync-1.0", "sync-1.0.xsd", "name"),
