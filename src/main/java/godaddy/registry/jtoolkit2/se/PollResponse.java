@@ -50,6 +50,7 @@ public class PollResponse extends Response {
     private DomainInfoIetfIdnResponseExtension domainInfoIetfIdnResponseExtension;
     private SecDnsDomainInfoResponseExtension secDnsDomainInfoResponseExtension;
     private DomainVariantResponseExtensionV1_1 variantResponseExtension1_1;
+    private DomainGdrVariantResponseExtensionV10 gdrVariantResponseExtension1_0;
     private DomainInfoRgpResponseExtension rgpDomainInfoResponseExtension;
     private DomainInfoKVResponseExtension kvDomainInfoResponseExtension;
     private DomainInfoApplicationResponseExtension domainInfoApplicationResponseExtension;
@@ -190,6 +191,7 @@ public class PollResponse extends Response {
         domainInfoIetfIdnResponseExtension = new DomainInfoIetfIdnResponseExtension();
         secDnsDomainInfoResponseExtension = new SecDnsDomainInfoResponseExtension();
         variantResponseExtension1_1 = new DomainVariantResponseExtensionV1_1(ResponseExtension.INFO);
+        gdrVariantResponseExtension1_0 = new DomainGdrVariantResponseExtensionV10(ResponseExtension.INFO);
         rgpDomainInfoResponseExtension = new DomainInfoRgpResponseExtension(ResponseExtension.INFO);
         kvDomainInfoResponseExtension = new DomainInfoKVResponseExtension();
         domainInfoApplicationResponseExtension = new DomainInfoApplicationResponseExtension(ResponseExtension.INFO);
@@ -197,6 +199,7 @@ public class PollResponse extends Response {
         domInfoResponse.registerExtension(domainInfoIetfIdnResponseExtension);
         domInfoResponse.registerExtension(secDnsDomainInfoResponseExtension);
         domInfoResponse.registerExtension(variantResponseExtension1_1);
+        domInfoResponse.registerExtension(gdrVariantResponseExtension1_0);
         domInfoResponse.registerExtension(rgpDomainInfoResponseExtension);
         domInfoResponse.registerExtension(kvDomainInfoResponseExtension);
         domInfoResponse.registerExtension(domainInfoApplicationResponseExtension);
@@ -227,6 +230,10 @@ public class PollResponse extends Response {
         return variantResponseExtension1_1;
     }
 
+    public DomainGdrVariantResponseExtensionV10 getGdrVariantResponseExtension1_0() {
+        return gdrVariantResponseExtension1_0;
+    }
+
     public DomainInfoRgpResponseExtension getRgpDomainInfoResponseExtension() {
         return rgpDomainInfoResponseExtension;
     }
@@ -239,4 +246,3 @@ public class PollResponse extends Response {
         return domainInfoApplicationResponseExtension;
     }
 }
-

@@ -4,14 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
 
 import godaddy.registry.jtoolkit2.se.DomainCreateResponse;
 import godaddy.registry.jtoolkit2.se.DomainVariantResponseExtensionV1_1;
 import godaddy.registry.jtoolkit2.se.IdnDomainVariant;
 import godaddy.registry.jtoolkit2.se.ResponseExtension;
-import org.junit.Test;
-
 import godaddy.registry.jtoolkit2.xml.XMLDocument;
 import godaddy.registry.jtoolkit2.xml.XMLParser;
 
@@ -34,7 +34,7 @@ public class DomainCreateVariantV1_1ResponseTest {
         assertEquals(dnsForm, response.getName());
         assertTrue("Variant extension should have been initialised",
                 variantsExtension.isInitialised());
-        final ArrayList<IdnDomainVariant> variantList = variantsExtension.getVariants();
+        final List<IdnDomainVariant> variantList = variantsExtension.getVariants();
         assertEquals("Incorrect number of variants returned", 1, variantList.size());
         assertEquals(variantDnsForm, variantList.get(0).getName());
     }
