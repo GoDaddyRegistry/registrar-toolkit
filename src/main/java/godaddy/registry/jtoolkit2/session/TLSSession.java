@@ -95,7 +95,7 @@ public class TLSSession implements Session, StatsManager {
     private Logger debugLogger;
     private Logger supportLogger;
     private Logger userLogger;
-    private boolean needOutputNamespacePrefixInXml;
+    private XmlOutputConfig xmlOutputConfig;
 
     {
         pname = TLSSession.class.getPackage().getName();
@@ -148,7 +148,7 @@ public class TLSSession implements Session, StatsManager {
         commandCounter = new CommandCounter(properties.getCommandLimitInterval());
         this.acquireTimeout = properties.getAcquireTimeout();
         this.soTimeout = properties.getSocketTimeout();
-        this.needOutputNamespacePrefixInXml = properties.needOutputNamespacePrefixInXml();
+        this.xmlOutputConfig = properties.getXmlOutputConfig();
 
         try {
             inaddr = InetAddress.getByName(properties.getHostname());
@@ -456,11 +456,7 @@ public class TLSSession implements Session, StatsManager {
     @Override
     public void write(Command command) throws IOException, ParsingException {
         try {
-            if (needOutputNamespacePrefixInXml) {
-                write(command.toXML(XmlOutputConfig.prefixAllNamespaceConfig()));
-            } else {
-                write(command.toXML());
-            }
+            write(command.toXML(xmlOutputConfig));
         } catch (SAXException saxe) {
             throw new ParsingException(saxe);
         }

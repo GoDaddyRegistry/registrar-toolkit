@@ -1,6 +1,7 @@
 package godaddy.registry.jtoolkit2.session;
 
 import godaddy.registry.jtoolkit2.se.CommandType;
+import godaddy.registry.jtoolkit2.xml.XmlOutputConfig;
 
 /**
  * Configure the behaviour and authentication sources of a Session.
@@ -169,4 +170,25 @@ public interface SessionProperties {
      * @return a boolean flag where true means XML output will have namespace prefix
      */
     boolean needOutputNamespacePrefixInXml();
+
+     /**
+     * Returns the {@link XmlOutputConfig} to use when serialising EPP commands.
+     *
+     * <p>The default implementation preserves backward-compatible behaviour:
+     * <ul>
+     *   <li>{@code needOutputNamespacePrefixInXml() == true}  → {@link XmlOutputConfig#prefixAllNamespaceConfig()}</li>
+     *   <li>{@code needOutputNamespacePrefixInXml() == false} → {@link XmlOutputConfig#defaultConfig()}</li>
+     * </ul>
+     * Override this method to customise namespace prefix handling (e.g. to use
+     * {@link XmlOutputConfig#prefixAllExcept} which prefixes all object
+     * namespaces but keeps specified namespaces as the default namespace).
+     *
+     * @return the XML output configuration for command serialisation
+     */
+    default XmlOutputConfig getXmlOutputConfig() {
+        if (needOutputNamespacePrefixInXml()) {
+            return XmlOutputConfig.prefixAllNamespaceConfig();
+        }
+        return XmlOutputConfig.defaultConfig();
+    }
 }

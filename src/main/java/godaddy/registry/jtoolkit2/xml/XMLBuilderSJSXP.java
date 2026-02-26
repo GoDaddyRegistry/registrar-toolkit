@@ -124,7 +124,8 @@ public final class XMLBuilderSJSXP implements XMLBuilder {
 
     private void dfs(Element e, Element parent, XmlOutputConfig xmlOutputConfig) throws XMLStreamException {
         String uri = e.getNamespaceURI();
-        String prefix = xmlOutputConfig.needsPrefixNamespace() ? namespaceContext.getPrefix(uri) : e.lookupPrefix(uri);
+        String prefix =
+            xmlOutputConfig.shouldPrefixNamespace(uri) ? namespaceContext.getPrefix(uri) : e.lookupPrefix(uri);
 
         String localName = e.getLocalName();
         if (localName == null) {

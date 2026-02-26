@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import godaddy.registry.jtoolkit2.Timer;
+import godaddy.registry.jtoolkit2.xml.XmlOutputConfig;
+import java.util.Collections;
 
 public class DomainCreateCommandTest {
 
@@ -113,6 +115,37 @@ public class DomainCreateCommandTest {
         try {
             String xml = cmd.toXML();
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><epp xmlns=\"urn:ietf:params:xml:ns:epp-1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd\"><command><create><create xmlns=\"urn:ietf:params:xml:ns:domain-1.0\" xsi:schemaLocation=\"urn:ietf:params:xml:ns:domain-1.0 domain-1.0.xsd\"><name>jtkutest.com.au</name><period unit=\"y\">6</period><ns><hostObj>ns1.jtkutest.com</hostObj><hostObj>ns2.jtkutest.com</hostObj></ns><registrant>JTKCON</registrant><contact type=\"tech\">JTKCON</contact><contact type=\"tech\">JTKCON2</contact><contact type=\"billing\">JTKCON3</contact><authInfo><pw/></authInfo></create></create><clTRID>JTKUTEST.20070101.010101.0</clTRID></command></epp>", xml);
+        } catch (SAXException saxe) {
+            fail(saxe.getMessage());
+        }
+    }
+
+    @Test
+    public void testPrefixAllNamespaceConfigPrefixesAllElements() {
+        Command cmd = new DomainCreateCommand("jtkutest.com.au", "jtkUT3st",
+                "JTKCON", new String[] {"JTKCON"}, null, null,
+                new String[] {}, new Period(1));
+        try {
+            String xml = cmd.toXML(XmlOutputConfig.prefixAllNamespaceConfig());
+            // EPP elements should have "e:" prefix
+            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><e:epp xmlns:e=\"urn:ietf:params:xml:ns:epp-1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd\"><e:command><e:create><domain:create xmlns:domain=\"urn:ietf:params:xml:ns:domain-1.0\" xsi:schemaLocation=\"urn:ietf:params:xml:ns:domain-1.0 domain-1.0.xsd\"><domain:name>jtkutest.com.au</domain:name><domain:period unit=\"y\">1</domain:period><domain:registrant>JTKCON</domain:registrant><domain:contact type=\"tech\">JTKCON</domain:contact><domain:authInfo><domain:pw>jtkUT3st</domain:pw></domain:authInfo></domain:create></e:create><e:clTRID>JTKUTEST.20070101.010101.0</e:clTRID></e:command></e:epp>", xml);
+        } catch (SAXException saxe) {
+            fail(saxe.getMessage());
+        }
+    }
+
+    @Test
+    public void testPrefixNamespaceConfigPrefixesAllElementsExcept() {
+        Command cmd = new DomainCreateCommand("jtkutest.com.au", "jtkUT3st",
+                "JTKCON", new String[] {"JTKCON"}, null, null,
+                new String[] {}, new Period(1));
+        try {
+            XmlOutputConfig config = XmlOutputConfig.prefixAllExcept(
+                    Collections.singleton("urn:ietf:params:xml:ns:epp-1.0"));
+            String xml = cmd.toXML(config);
+
+            // EPP elements should NOT have "e:" prefix — they use default namespace
+           assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><epp xmlns=\"urn:ietf:params:xml:ns:epp-1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd\"><command><create><domain:create xmlns:domain=\"urn:ietf:params:xml:ns:domain-1.0\" xsi:schemaLocation=\"urn:ietf:params:xml:ns:domain-1.0 domain-1.0.xsd\"><domain:name>jtkutest.com.au</domain:name><domain:period unit=\"y\">1</domain:period><domain:registrant>JTKCON</domain:registrant><domain:contact type=\"tech\">JTKCON</domain:contact><domain:authInfo><domain:pw>jtkUT3st</domain:pw></domain:authInfo></domain:create></create><clTRID>JTKUTEST.20070101.010101.0</clTRID></command></epp>", xml);
         } catch (SAXException saxe) {
             fail(saxe.getMessage());
         }
