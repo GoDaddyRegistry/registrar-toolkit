@@ -2,7 +2,7 @@
 
 ## Downloads
 
-The latest gdreg-toolkit is available for download: [gdreg-toolkit v5.6.0](https://github.com/GoDaddyRegistry/registrar-toolkit/packages/1203889?version=5.6.0)
+The latest gdreg-toolkit is available for download: [gdreg-toolkit v5.6.1](https://github.com/GoDaddyRegistry/registrar-toolkit/packages/1203889?version=5.6.1)
 
 The download URLs for sources and javadoc can also be found in this page.
 
@@ -48,7 +48,7 @@ This toolkit also provides a mechanism to perform the following Trademark Cleari
 
 #### Direct download
 
-Obtain the latest toolkit here: [Toolkit release v5.6.0](https://github.com/GoDaddyRegistry/registrar-toolkit/releases/tag/5.6.0)
+Obtain the latest toolkit here: [Toolkit release v5.6.1](https://github.com/GoDaddyRegistry/registrar-toolkit/releases/tag/5.6.1)
 
 #### Dependency Management
 
@@ -57,7 +57,7 @@ Use your build's dependency management tool to automatically download the toolki
 * Repository: `https://maven.pkg.github.com/GoDaddyRegistry/registrar-toolkit`
 * groupId: `godaddy.registry`
 * artifactId: `gdrjtk`
-* version: `5.6.0`
+* version: `5.6.1`
 
 For example (using Maven):
 
@@ -72,7 +72,7 @@ For example (using Maven):
        <dependency>
           <groupId>godaddy.registry</groupId>
           <artifactId>gdrjtk</artifactId>
-          <version>5.6.0</version>
+          <version>5.6.1</version>
        </dependency>
     </dependencies>
 
