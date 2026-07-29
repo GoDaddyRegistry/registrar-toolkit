@@ -13,6 +13,10 @@ For more information, please read [Installation and Setup](#installation-and-set
 
 To build the gdreg-toolkit, you must have the Java Development Kit (JDK) v8.0 or above installed. The project can be built with the command `gradlew build`.
 
+The `JF_URL` environment variable must be set to the Maven repository URL before building, as it is required for dependency resolution:
+
+    export JF_URL=https://<your-maven-repo-url>
+
 
 ## Introduction
 

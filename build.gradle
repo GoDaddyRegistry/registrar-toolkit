@@ -30,12 +30,18 @@ group = artifactGroupId
 
 repositories {
     maven {
-        url = System.getenv('JF_URL') ? "${System.getenv('JF_URL')}/artifactory/java-virt" : 'https://gdartifactory1.jfrog.io/artifactory/java-virt'
-        if (System.getenv('ARTIFACTORY_USERNAME') || findProperty('gdArtifactoryUser')) {
-            credentials {
-                username = System.getenv('ARTIFACTORY_USERNAME') ?: findProperty('gdArtifactoryUser') ?: ''
-                password = System.getenv('ARTIFACTORY_PASSWORD') ?: findProperty('gdArtifactoryToken') ?: ''
+        def jfUrl = System.getenv("JF_URL") ?: findProperty('JF_URL')
+        def hasCredentials = System.getenv('ARTIFACTORY_USERNAME') || findProperty('gdArtifactoryUser')
+        if (jfUrl) {
+            url = hasCredentials ? "${jfUrl}/artifactory/java-virt" : jfUrl
+            if (hasCredentials) {
+                credentials {
+                    username = System.getenv('ARTIFACTORY_USERNAME') ?: findProperty('gdArtifactoryUser') ?: ''
+                    password = System.getenv('ARTIFACTORY_PASSWORD') ?: findProperty('gdArtifactoryToken') ?: ''
+                }
             }
+        } else {
+            throw new GradleException("JF_URL environment variable must be configured to mavenCentral url.")
         }
     }
     flatDir name: 'ExternalJars', dirs: 'lib'
