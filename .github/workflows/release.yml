@@ -35,15 +35,15 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Get Artifactory Token
+      - name: Get Artifactory Write Token
         if: github.repository != 'GoDaddyRegistry/registrar-toolkit'
         uses: jfrog/setup-jfrog-cli@deda456d982fc5e9a7a020b63eb0d2968aedd33e  # v5.1.0
-        id: jfrog
+        id: jfrog-publish
         with:
-          oidc-provider-name: github
-      - name: Mask Artifactory token
+          oidc-provider-name: github-write
+      - name: Mask Artifactory Write Token
         if: github.repository != 'GoDaddyRegistry/registrar-toolkit'
-        run: echo "::add-mask::${{ steps.jfrog.outputs.oidc-token }}"
+        run: echo "::add-mask::${{ steps.jfrog-publish.outputs.oidc-token }}"
       - name: Publish package
         run: |
           ./gradlew -DrepoUrl="$GPR_URL" \
@@ -53,5 +53,5 @@ jobs:
           GPR_URL: "https://maven.pkg.github.com/${{ github.repository }}"
           GPR_USER: "${{ env.GITHUB_ACTOR }}"
           GPR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          ARTIFACTORY_USERNAME: ${{ steps.jfrog.outputs.oidc-user }}
-          ARTIFACTORY_PASSWORD: ${{ steps.jfrog.outputs.oidc-token }}
+          ARTIFACTORY_USERNAME: ${{ steps.jfrog-publish.outputs.oidc-user }}
+          ARTIFACTORY_PASSWORD: ${{ steps.jfrog-publish.outputs.oidc-token }}

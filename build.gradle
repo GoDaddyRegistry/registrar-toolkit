@@ -256,6 +256,21 @@ publishing {
                 password = System.properties['repoPassword']
             }
         }
+        if (System.getenv('ARTIFACTORY_USERNAME') || findProperty('gdArtifactoryUser')) {
+            maven {
+                name = "Artifactory"
+                def jfUrl = System.getenv('JF_URL')
+                if (jfUrl) {
+                    url = "${jfUrl}/artifactory/maven-gdreg-narwhal-local"
+                } else {
+                    throw new GradleException("JF_URL environment variable is required for Artifactory publishing")
+                }
+                credentials {
+                    username = System.getenv('ARTIFACTORY_USERNAME') ?: findProperty('gdArtifactoryUser') ?: ''
+                    password = System.getenv('ARTIFACTORY_PASSWORD') ?: findProperty('gdArtifactoryToken') ?: ''
+                }
+            }
+        }
     }
 }
 
